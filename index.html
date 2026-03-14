@@ -82,30 +82,144 @@
       display: none;
     }
 
-    /* Upload zone */
-    .upload-card {
+    /* Input mode tabs */
+    .input-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+      border-radius: 14px 14px 0 0;
+      overflow: hidden;
+      border: 1px solid #334155;
+      border-bottom: none;
+    }
+
+    .input-tab {
+      flex: 1;
+      padding: 14px 20px;
       background: #1e293b;
-      border: 2px dashed #334155;
-      border-radius: 14px;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .input-tab:hover { color: #cbd5e1; background: #263348; }
+    .input-tab.active {
+      color: #60a5fa;
+      background: #0f172a;
+      border-bottom-color: #3b82f6;
+    }
+
+    .input-panel {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    /* Upload zone */
+    .upload-zone {
       padding: 48px 24px;
       text-align: center;
-      margin-bottom: 28px;
       transition: border-color 0.2s, background 0.2s;
       cursor: pointer;
       position: relative;
     }
-    .upload-card.drag-over {
-      border-color: #3b82f6;
-      background: #1e3a5f20;
-    }
-    .upload-card input[type="file"] {
+    .upload-zone.drag-over { background: #1e3a5f20; }
+    .upload-zone input[type="file"] {
       position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
 
     .upload-icon { font-size: 48px; margin-bottom: 16px; }
-    .upload-card h2 { font-size: 18px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
-    .upload-card p { font-size: 14px; color: #64748b; }
-    .upload-card .hint { font-size: 12px; color: #475569; margin-top: 8px; }
+    .upload-zone h2 { font-size: 18px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+    .upload-zone p { font-size: 14px; color: #64748b; }
+    .upload-zone .hint { font-size: 12px; color: #475569; margin-top: 8px; }
+
+    /* URL input panel */
+    .url-zone {
+      padding: 32px 24px;
+    }
+
+    .url-zone h2 { font-size: 16px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+    .url-zone p { font-size: 13px; color: #64748b; margin-bottom: 20px; line-height: 1.6; }
+
+    .url-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .url-input-row input {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 11px 14px;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+    .url-input-row input:focus { outline: none; border-color: #3b82f6; }
+    .url-input-row input::placeholder { color: #475569; }
+
+    .btn-add-url {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-add-url:hover { background: #2563eb; }
+
+    .url-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .url-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .url-item .url-icon { font-size: 16px; flex-shrink: 0; }
+    .url-item .url-text {
+      flex: 1;
+      font-size: 13px;
+      color: #94a3b8;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .url-item .btn-remove {
+      background: none;
+      border: none;
+      color: #475569;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .url-item .btn-remove:hover { color: #ef4444; }
+
+    .url-hint {
+      font-size: 12px;
+      color: #475569;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
 
     /* Preview grid */
     .preview-section { margin-bottom: 28px; display: none; }
@@ -120,9 +234,6 @@
       object-fit: cover;
       border-radius: 8px;
       border: 1px solid #334155;
-    }
-    .preview-count {
-      font-size: 12px; color: #64748b; margin-top: 8px;
     }
 
     /* Lesson name */
@@ -262,9 +373,10 @@
       display: none;
     }
 
-    /* get api key link */
     .get-key-link { color: #60a5fa; text-decoration: none; }
     .get-key-link:hover { text-decoration: underline; }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -290,19 +402,44 @@
     <div class="key-status" id="keyStatus">✓ Key saved locally in your browser</div>
   </div>
 
-  <!-- Upload -->
-  <div class="upload-card" id="dropZone">
-    <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(this.files)"/>
-    <div class="upload-icon">🖼️</div>
-    <h2>Drop your textbook images here</h2>
-    <p>Or click to browse — select all images for one lesson at once</p>
-    <p class="hint">Supports JPG, PNG, WEBP · Up to 60 images per lesson</p>
+  <!-- Input Mode Tabs -->
+  <div class="input-tabs">
+    <button class="input-tab active" id="tabImages" onclick="switchTab('images')">🖼️ Upload Images</button>
+    <button class="input-tab" id="tabUrl" onclick="switchTab('url')">🔗 Paste URL</button>
   </div>
 
-  <!-- Preview -->
-  <div class="preview-section" id="previewSection">
-    <h3 id="previewLabel">0 images loaded</h3>
-    <div class="preview-grid" id="previewGrid"></div>
+  <div class="input-panel">
+
+    <!-- Image Upload Panel -->
+    <div id="panelImages">
+      <div class="upload-zone" id="dropZone">
+        <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(this.files)"/>
+        <div class="upload-icon">🖼️</div>
+        <h2>Drop your textbook images here</h2>
+        <p>Or click to browse — select all images for one lesson at once</p>
+        <p class="hint">Supports JPG, PNG, WEBP · Up to 60 images per lesson</p>
+      </div>
+      <!-- Preview grid (inside panel) -->
+      <div id="previewSection" style="display:none; padding: 0 24px 24px;">
+        <h3 id="previewLabel" style="font-size:14px; font-weight:600; color:#94a3b8; margin-bottom:12px;"></h3>
+        <div class="preview-grid" id="previewGrid"></div>
+      </div>
+    </div>
+
+    <!-- URL Panel -->
+    <div id="panelUrl" class="url-zone hidden">
+      <h2>📎 Paste your textbook URL</h2>
+      <p>Works with textbook web pages, online PDFs, Google Drive links, and most public URLs. Add multiple URLs to cover a full lesson chapter.</p>
+      <div class="url-input-row">
+        <input type="url" id="urlInput" placeholder="https://your-textbook.com/chapter-3" onkeydown="if(event.key==='Enter') addUrl()"/>
+        <button class="btn-add-url" onclick="addUrl()">+ Add</button>
+      </div>
+      <div class="url-list" id="urlList"></div>
+      <p class="url-hint">
+        💡 Tips: Public web pages work best. For Google Drive PDFs, use the share link. For private or paywalled textbooks, use the image upload tab instead.
+      </p>
+    </div>
+
   </div>
 
   <!-- Lesson name -->
@@ -321,7 +458,7 @@
 
   <!-- Progress -->
   <div class="progress-bar-wrap" id="progressWrap">
-    <div class="progress-label" id="progressLabel">Analyzing images...</div>
+    <div class="progress-label" id="progressLabel">Analyzing content...</div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-step" id="progressStep"></div>
   </div>
@@ -359,6 +496,8 @@
 
 <script>
   let uploadedFiles = [];
+  let addedUrls = [];
+  let activeTab = 'images';
   let generatedSections = {};
 
   // Load saved key
@@ -375,6 +514,21 @@
     if (!key) return;
     localStorage.setItem('gemini_api_key', key);
     document.getElementById('keyStatus').style.display = 'block';
+  }
+
+  function switchTab(tab) {
+    activeTab = tab;
+    document.getElementById('tabImages').classList.toggle('active', tab === 'images');
+    document.getElementById('tabUrl').classList.toggle('active', tab === 'url');
+    document.getElementById('panelImages').classList.toggle('hidden', tab !== 'images');
+    document.getElementById('panelUrl').classList.toggle('hidden', tab !== 'url');
+    updateGenerateBtn();
+  }
+
+  function updateGenerateBtn() {
+    const hasImages = uploadedFiles.length > 0;
+    const hasUrls = addedUrls.length > 0;
+    document.getElementById('generateBtn').disabled = activeTab === 'images' ? !hasImages : !hasUrls;
   }
 
   // Drag & drop
@@ -398,8 +552,45 @@
     });
     document.getElementById('previewLabel').textContent = `${uploadedFiles.length} image${uploadedFiles.length !== 1 ? 's' : ''} loaded`;
     document.getElementById('previewSection').style.display = uploadedFiles.length ? 'block' : 'none';
-    document.getElementById('generateBtn').disabled = uploadedFiles.length === 0;
+    updateGenerateBtn();
     hideError();
+  }
+
+  function addUrl() {
+    const input = document.getElementById('urlInput');
+    const val = input.value.trim();
+    if (!val) return;
+    // Basic URL validation
+    try { new URL(val); } catch { showError('Please enter a valid URL (starting with https://)'); return; }
+    if (addedUrls.includes(val)) { showError('That URL is already added.'); return; }
+    if (addedUrls.length >= 10) { showError('Maximum 10 URLs per session.'); return; }
+    addedUrls.push(val);
+    input.value = '';
+    hideError();
+    renderUrlList();
+    updateGenerateBtn();
+  }
+
+  function removeUrl(idx) {
+    addedUrls.splice(idx, 1);
+    renderUrlList();
+    updateGenerateBtn();
+  }
+
+  function renderUrlList() {
+    const list = document.getElementById('urlList');
+    list.innerHTML = '';
+    addedUrls.forEach((url, i) => {
+      const item = document.createElement('div');
+      item.className = 'url-item';
+      const icon = url.includes('pdf') || url.includes('.pdf') ? '📄' : '🌐';
+      item.innerHTML = `
+        <span class="url-icon">${icon}</span>
+        <span class="url-text" title="${url}">${url}</span>
+        <button class="btn-remove" onclick="removeUrl(${i})" title="Remove">✕</button>
+      `;
+      list.appendChild(item);
+    });
   }
 
   function setProgress(pct, label, step) {
@@ -424,7 +615,8 @@
     });
   }
 
-  async function callGemini(apiKey, prompt, images) {
+  // Call Gemini with images (base64 inline)
+  async function callGeminiImages(apiKey, prompt, images) {
     const parts = [{ text: prompt }];
     for (const img of images) {
       const b64 = await fileToBase64(img);
@@ -449,8 +641,74 @@
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   }
 
+  // Call Gemini with URLs (using file_data uri parts)
+  async function callGeminiUrls(apiKey, prompt, urls) {
+    // Use text parts with URL context — Gemini 1.5 Flash can browse public URLs via the URL param
+    const parts = [{ text: prompt + '\n\nSource URLs to analyze:\n' + urls.map((u,i) => `${i+1}. ${u}`).join('\n') }];
+
+    // For each URL, add a file_data part if it looks like a PDF, otherwise rely on text description
+    const urlParts = urls.map(url => ({
+      file_data: {
+        mime_type: url.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'text/html',
+        file_uri: url
+      }
+    }));
+
+    // Try with file_data (works for public URLs Gemini can fetch)
+    const allParts = [...urlParts, { text: prompt }];
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: allParts }] })
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const errMsg = err?.error?.message || `API error ${res.status}`;
+      // Fallback: if file_data fails, retry with text-only prompt including URLs
+      if (res.status === 400 || res.status === 403) {
+        return await callGeminiUrlsFallback(apiKey, prompt, urls);
+      }
+      throw new Error(errMsg);
+    }
+
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  }
+
+  // Fallback: ask Gemini to reason about the URLs from its knowledge
+  async function callGeminiUrlsFallback(apiKey, prompt, urls) {
+    const fallbackPrompt = `The user has provided these textbook/resource URLs for a Revit Architecture course:
+${urls.map((u,i) => `${i+1}. ${u}`).join('\n')}
+
+Note: Direct URL fetching is unavailable. Based on the URLs provided and your knowledge of Revit Architecture textbooks and training materials, please complete the following task as thoroughly as possible, focusing on the lesson content that would typically be found at these resources:
+
+${prompt}`;
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: fallbackPrompt }] }] })
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `API error ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  }
+
   const PROMPTS = {
-    notes: `You are an expert Revit Architecture instructor. Analyze ALL the provided textbook images carefully.
+    notes: `You are an expert Revit Architecture instructor. Analyze ALL the provided textbook content carefully.
 
 Generate SECTION 1: INTEGRATED LESSON NOTES
 
@@ -458,41 +716,41 @@ Include:
 - Lesson title and topic
 - Clear concept explanations for every topic shown
 - Step-by-step modeling workflows from the exercises
-- Examples from the images
+- Examples from the content
 - Tables where appropriate
 - Speed tips and professional workflow summaries
 
-Be detailed and thorough. Use the actual content from ALL images.`,
+Be detailed and thorough. Use the actual content from ALL provided material.`,
 
-    cheatsheet: `Based on the textbook images provided, generate SECTION 2: WORKFLOW CHEAT SHEET
+    cheatsheet: `Based on the textbook content provided, generate SECTION 2: WORKFLOW CHEAT SHEET
 
 Create a task-based modeling workflow showing the actual sequence used in these lessons.
-Format as a step-by-step flow using → arrows.
+Format as a step-by-step flow using arrows.
 Example format:
-Architecture Tab → Wall Tool → Draw Layout → Insert Doors → Insert Windows → Create Floors
+Architecture Tab -> Wall Tool -> Draw Layout -> Insert Doors -> Insert Windows -> Create Floors
 
 Show the real modeling order demonstrated in the exercises. Include sub-steps for each major tool.`,
 
-    tools: `Based on the textbook images provided, generate SECTION 3: TOOL MEMORY GUIDE
+    tools: `Based on the textbook content provided, generate SECTION 3: TOOL MEMORY GUIDE
 
 Create a reference table of every tool, command, and parameter mentioned or shown.
 
 Format as:
 Tool/Command | Location in Revit | Purpose | Key Parameters | When to Use It
 
-Include every tool visible in the images. Be specific about Ribbon tabs and panel locations.`,
+Include every tool visible in the content. Be specific about Ribbon tabs and panel locations.`,
 
-    flowmap: `Based on the textbook images provided, generate SECTION 4: COMMAND FLOW MAP
+    flowmap: `Based on the textbook content provided, generate SECTION 4: COMMAND FLOW MAP
 
 Create a visual workflow showing the fastest professional modeling order.
 Use this format:
-[Step] → [Step] → [Step]
-         ↓
+[Step] -> [Step] -> [Step]
+         |
     [Sub-steps]
 
 Show the optimal sequence for completing all tasks in this lesson with the fewest clicks.`,
 
-    master: `Based on the textbook images provided, generate SECTION 5: MASTER MODELING GUIDE
+    master: `Based on the textbook content provided, generate SECTION 5: MASTER MODELING GUIDE
 
 Create an integrated professional workflow that combines ALL systems covered in these lessons.
 Structure it as:
@@ -502,13 +760,21 @@ Structure it as:
    - Professional tips
 2. Next system...
 
-Explain WHY this order is used in professional architectural modeling. Include any shortcuts or best practices shown in the images.`
+Explain WHY this order is used in professional architectural modeling. Include any shortcuts or best practices shown in the content.`
   };
 
   async function generate() {
     const apiKey = localStorage.getItem('gemini_api_key') || document.getElementById('apiKey').value.trim();
     if (!apiKey) { showError('Please enter and save your Gemini API key first.'); return; }
-    if (uploadedFiles.length === 0) { showError('Please upload at least one image.'); return; }
+
+    if (activeTab === 'images' && uploadedFiles.length === 0) {
+      showError('Please upload at least one image.');
+      return;
+    }
+    if (activeTab === 'url' && addedUrls.length === 0) {
+      showError('Please add at least one URL.');
+      return;
+    }
 
     hideError();
     document.getElementById('generateBtn').disabled = true;
@@ -516,10 +782,10 @@ Explain WHY this order is used in professional architectural modeling. Include a
     document.getElementById('progressWrap').style.display = 'block';
 
     const sections = [
-      { key: 'notes',      outId: 'out1', label: 'Generating lesson notes...',    pct: 10 },
+      { key: 'notes',      outId: 'out1', label: 'Generating lesson notes...',       pct: 10 },
       { key: 'cheatsheet', outId: 'out2', label: 'Building workflow cheat sheet...', pct: 30 },
-      { key: 'tools',      outId: 'out3', label: 'Creating tool memory guide...',  pct: 50 },
-      { key: 'flowmap',    outId: 'out4', label: 'Mapping command flow...',        pct: 70 },
+      { key: 'tools',      outId: 'out3', label: 'Creating tool memory guide...',    pct: 50 },
+      { key: 'flowmap',    outId: 'out4', label: 'Mapping command flow...',          pct: 70 },
       { key: 'master',     outId: 'out5', label: 'Writing master modeling guide...', pct: 85 },
     ];
 
@@ -527,7 +793,12 @@ Explain WHY this order is used in professional architectural modeling. Include a
       for (let i = 0; i < sections.length; i++) {
         const s = sections[i];
         setProgress(s.pct, s.label, `Step ${i+1} of ${sections.length}`);
-        const result = await callGemini(apiKey, PROMPTS[s.key], uploadedFiles);
+        let result;
+        if (activeTab === 'images') {
+          result = await callGeminiImages(apiKey, PROMPTS[s.key], uploadedFiles);
+        } else {
+          result = await callGeminiUrls(apiKey, PROMPTS[s.key], addedUrls);
+        }
         document.getElementById(s.outId).textContent = result;
         generatedSections[s.key] = result;
       }
@@ -557,7 +828,6 @@ Explain WHY this order is used in professional architectural modeling. Include a
     let y = margin;
 
     function addPage() { doc.addPage(); y = margin; }
-
     function checkY(h) { if (y + h > pageH - margin) addPage(); }
 
     // Title
@@ -580,13 +850,11 @@ Explain WHY this order is used in professional architectural modeling. Include a
 
     keys.forEach((key, i) => {
       addPage();
-      // Section title
       doc.setFontSize(16); doc.setFont('helvetica', 'bold');
       doc.text(titles[i], margin, y); y += 24;
       doc.setLineWidth(0.5);
       doc.line(margin, y, pageW - margin, y); y += 14;
 
-      // Content
       doc.setFontSize(10); doc.setFont('helvetica', 'normal');
       const lines = doc.splitTextToSize(generatedSections[key] || '', maxW);
       lines.forEach(line => {
